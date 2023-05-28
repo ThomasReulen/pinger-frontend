@@ -1,0 +1,11 @@
+services:
+
+  pingerfront:    
+    container_name: pingerfront
+    image: thomasreulen/pinger-frontend:v1.0.0 
+    volumes:
+      - ./src/:/usr/src/app
+      - ./testdata/:/pinger-data
+    restart: always
+    ports:
+      - 5000:5000
