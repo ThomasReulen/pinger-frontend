@@ -18,21 +18,20 @@ def ipdetail(ip):
     bHeader = 0 
     for f in data:
         if bHeader == 0:            
-            retString += '<table><tr><th>Row</th><th>File</th>'
+            retString += '<table border="1" style="width:100%"><tr><th>Row</th><th>File</th>'
             for ch in data[f]['Stats']:
                 retString += '<th>' + ch + '</th>'
             retString += '</tr>'
             bHeader = 1
         cssClass = ''
-        if data[f]['Stats']['Errors'] != "0":
-            cssClass = 'error'
-        timestamp = f.split(".")[0]
-        dt = datetime.datetime.fromtimestamp(int(timestamp))
-        retString += '<tr class="'+cssClass+'"><td>'+str(row)+'</td><td>'+str(dt)+'</td>'
-        row += 1;
-        for stat in data[f]['Stats']:
-            retString += '<td>' + data[f]['Stats'][stat] + '</td>'
-        retString += '</tr>'
+        if data[f]['Stats']['PacketLossPercent'] != "0":            
+            timestamp = f.split(".")[0]
+            dt = datetime.datetime.fromtimestamp(int(timestamp))
+            retString += '<tr class="'+cssClass+'"><td>'+str(row)+'</td><td>'+str(dt)+'</td>'
+            row += 1;
+            for stat in data[f]['Stats']:
+                retString += '<td>' + data[f]['Stats'][stat] + '</td>'
+            retString += '</tr>'
     retString += '</table>'            
     retString = retString + '</body></html>'
     return retString

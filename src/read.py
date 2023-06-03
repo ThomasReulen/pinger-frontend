@@ -34,9 +34,18 @@ def readIpIterationFiles(ipDir):
     print("iterate into "+ipDir)
     iterationFiles = {}
     with os.scandir(ipDir) as iteration:
-        for subDir in iteration:
+        for subDir in iteration:            
             if subDir.is_dir():
-                iterationFiles.update(getFileContents(subDir.path))
+                tmpPath = ipDir + "/" + subDir.name + ".json"
+                tmpContent = getFileContents(subDir.path)                
+                f = open(tmpPath,"w")
+                json.dump(tmpContent,f)
+                f.close()
+            else: 
+                f = open(tmpPath,"r")                                
+                tmpContent = json.loads(f.read())
+                f.close()
+            iterationFiles.update(tmpContent)
     return iterationFiles
 
 
