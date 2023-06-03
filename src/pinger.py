@@ -71,6 +71,6 @@ if __name__ == "__main__":
     p = os.environ.get('DATA_FOLDER')
     if p is None: 
         raise Exception('no path given')    
-    str = read.readData(p)
-    print(str)
+    #str = read.readData(p)
+    #print(str)
     #app.run()
