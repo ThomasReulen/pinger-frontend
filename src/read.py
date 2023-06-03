@@ -26,26 +26,35 @@ def getFileContents(filesPath):
     with os.scandir(filesPath) as files:
         for item in files:
             if item.is_file():
-                fileContents[item.name] = getSingleFileContent(item.path)                
+                fileContents[os.path.splitext(item.name)[0]] = getSingleFileContent(item.path)                
     return fileContents 
 
 
 def readIpIterationFiles(ipDir):
     print("iterate into "+ipDir)
-    iterationFiles = {}
-    with os.scandir(ipDir) as iteration:
-        for subDir in iteration:            
-            if subDir.is_dir():
-                tmpPath = ipDir + "/" + subDir.name + ".json"
-                tmpContent = getFileContents(subDir.path)                
-                f = open(tmpPath,"w")
-                json.dump(tmpContent,f)
-                f.close()
-            else: 
-                f = open(tmpPath,"r")                                
-                tmpContent = json.loads(f.read())
-                f.close()
-            iterationFiles.update(tmpContent)
+    if os.path.isfile(ipDir+".json"):
+        f = open(ipDir+".json","r")                                
+        iterationFiles = json.loads(f.read())
+        f.close()
+    else: 
+        iterationFiles = {}
+        with os.scandir(ipDir) as iteration:
+            for subDir in iteration:            
+                tmpFilePath = ipDir + "/" + subDir.name + ".json"
+                if subDir.is_dir() and os.path.isfile(tmpFilePath):
+                    f = open(tmpFilePath,"r")                                
+                    tmpContent = json.loads(f.read())
+                    f.close()
+                elif subDir.is_dir():
+                    tmpContent = getFileContents(subDir.path)                    
+                    if len(tmpContent) == 250:
+                        f = open(tmpFilePath,"w")
+                        json.dump(tmpContent,f)
+                        f.close()                        
+                iterationFiles.update(tmpContent)        
+        f = open(ipDir+".json","w")
+        json.dump(iterationFiles,f)
+        f.close()
     return iterationFiles
 
 

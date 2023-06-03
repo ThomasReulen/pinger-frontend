@@ -3,8 +3,26 @@ import os
 import datetime
 import read
 import sys
+import json
 
 app = Flask(__name__)
+
+@app.route('/api/ipdetail/<ip>')
+def api_ipdetail(ip):    
+    row = 1
+    p = os.environ.get('DATA_FOLDER')
+    if p is None: 
+        raise Exception('no path given')    
+    data = read.readIpIterationFiles(p+'/'+ip)    
+    returnObj = {}
+    for row in data:
+        obj=data[row]
+        returnObj[row] = {}
+        returnObj[row]["ts"]=row
+        returnObj[row]["Host"]=obj["Host"]
+        returnObj[row]["Stats"]=obj["Stats"]        
+    retString=json.dumps(returnObj)
+    return retString
 
 @app.route('/ipdetail/<ip>')
 def ipdetail(ip):    
@@ -23,7 +41,7 @@ def ipdetail(ip):
                 retString += '<th>' + ch + '</th>'
             retString += '</tr>'
             bHeader = 1
-        cssClass = ''
+        cssClass = ''        
         if data[f]['Stats']['PacketLossPercent'] != "0":            
             timestamp = f.split(".")[0]
             dt = datetime.datetime.fromtimestamp(int(timestamp))
