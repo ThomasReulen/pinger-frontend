@@ -1,6 +1,6 @@
 import os 
 import json 
-import boto3
+
 
 def getIpDirs(datadir):
     ips = {}
@@ -31,8 +31,10 @@ def getFileContents(filesPath):
     return fileContents 
 
 
-def readIpIterationFiles(ipDir):
+def readIpIterationFiles(ipDir,clearCache):
     print("iterate into "+ipDir)
+    if os.path.isfile(ipDir+".json") & clearCache:
+        os.remove(ipDir+".json")
     if os.path.isfile(ipDir+".json"):
         f = open(ipDir+".json","r")                                
         iterationFiles = json.loads(f.read())
@@ -56,13 +58,6 @@ def readIpIterationFiles(ipDir):
         f = open(ipDir+".json","w")
         json.dump(iterationFiles,f)
         f.close()        
-        session = boto3.Session(profile_name='donkey')
-        s3 = session.client('s3')
-        s3.put_object(
-            Bucket='xernosch',
-            Body=json.dumps(iterationFiles),
-            Key='pinger-data/'+ipDir+".json"            
-        )
     return iterationFiles
 
 
