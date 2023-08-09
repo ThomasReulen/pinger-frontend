@@ -30,9 +30,11 @@ def api_ipdetail(ip):
 @app.route('/ipdetail/<ip>')
 def ipdetail(ip):    
     print("route /ipdetail .. ")
-    clearCache = False
     cc = request.args.get('reset')
-    if len(cc):
+    showAll = request.args.get('showall')
+    if cc is None:
+        clearCache = False 
+    else: 
         clearCache = True
     row = 1
     p = os.environ.get('DATA_FOLDER')
@@ -40,6 +42,7 @@ def ipdetail(ip):
         raise Exception('no path given')    
     data = read.readIpIterationFiles(p+'/'+ip,clearCache)
     retString = '<html><head><title></title><style>.error { background-color:#ff7777; }</style></head><body>'
+    retString += '<p><a href="?reset=1">reset</a></p>'
     bHeader = 0 
     for f in data:
         if bHeader == 0:            
@@ -49,7 +52,7 @@ def ipdetail(ip):
             retString += '</tr>'
             bHeader = 1
         cssClass = ''        
-        if data[f]['Stats']['PacketLossPercent'] != "0":            
+        if data[f]['Stats']['PacketLossPercent'] != "0" or showAll == "1":            
             timestamp = f.split(".")[0]
             dt = datetime.datetime.fromtimestamp(int(timestamp))
             retString += '<tr class="'+cssClass+'"><td>'+str(row)+'</td><td>'+str(dt)+'</td>'
@@ -66,7 +69,7 @@ def index():
     print("route /index .. ")
     p = os.environ.get('DATA_FOLDER')
     if p is None: 
-        raise Exception('no path given')
+        p = "/pinger-data"
     ips = read.getIpDirs(p)
     str = ''
     for link in ips:
@@ -93,6 +96,7 @@ if __name__ == "__main__":
     else: 
         if len(s3bucket):
             while True:
-                cmd = "aws --profile donkey s3 sync /pinger-data-target/ s3://"+s3bucket+"/"
+                #cmd = "aws --profile donkey s3 sync /pinger-data-target/ s3://"+s3bucket+"/"
+                cmd = 'rsync -Pav -e "ssh -o StrictHostKeyChecking=no -i /aws/my-showcase.pem" ec2-user@18.185.101.130:/home/ec2-user/'+ip+'/ /pinger-data/'+ip+'/'
                 os.system(cmd)
                 time.sleep(3600) 

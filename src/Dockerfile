@@ -11,7 +11,7 @@ ENV IP=8.8.8.8
 ENV DELTA_SECONDS=10000
 
 #RUN pip install --no-cache-dir -r requirements.txt
-RUN apt update && apt install -y zip curl  && \
+RUN apt update && apt install -y ssh rsync zip curl  && \
     pip install flask boto3 && \
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && \
