@@ -43,6 +43,7 @@ def ipdetail(ip):
     data = read.readIpIterationFiles(p+'/'+ip,clearCache)
     retString = '<html><head><title></title><style>.error { background-color:#ff7777; }</style></head><body>'
     retString += '<p><a href="?reset=1">reset</a></p>'
+    retString += '<p><a href="?showall=1">show all</a></p>'
     bHeader = 0 
     for f in data:
         if bHeader == 0:            
