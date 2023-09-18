@@ -32,6 +32,7 @@ def ipdetail(ip):
     print("route /ipdetail .. ")
     cc = request.args.get('reset')
     showAll = request.args.get('showall')
+    update = request.args.get('update')
     if cc is None:
         clearCache = False 
     else: 
