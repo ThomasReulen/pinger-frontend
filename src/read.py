@@ -27,10 +27,13 @@ def getFileContents(filesPath):
     with os.scandir(filesPath) as files:
         for item in files:
             if item.is_file():
-                tmp = getSingleFileContent(item.path)
-                print(tmp)
+                tmp = getSingleFileContent(item.path)                
                 if tmp["Stats"]["PacketLossPercent"] > "0":
+                    print(tmp["Stats"]["PacketLossPercent"])
                     fileContents[os.path.splitext(item.name)[0]] = tmp
+                else: 
+                    print("empty should be: "+os.path.splitext(item.name)[0])
+                    fileContents[os.path.splitext(item.name)[0]] = {}                    
     return fileContents 
 
 
@@ -62,11 +65,10 @@ def readIpIterationFiles(ipDir,clearCache):
                     f.close()
                 elif subDir.is_dir():
                     print("subdir is dir, so create file")
-                    tmpContent = getFileContents(subDir.path)        
-                    if len(tmpContent) > 0:
-                        f = open(tmpFilePath,"w")
-                        json.dump(tmpContent,f)
-                        f.close()     
+                    tmpContent = getFileContents(subDir.path)                    
+                    f = open(tmpFilePath,"w")
+                    json.dump(tmpContent,f)
+                    f.close()     
                     iterationFiles.update(tmpContent)
                 else:
                     print("no file and no dir, something else")

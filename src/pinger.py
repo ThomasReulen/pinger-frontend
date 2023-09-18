@@ -29,7 +29,21 @@ def api_ipdetail(ip):
 
 @app.route('/ipdetail/<ip>')
 def ipdetail(ip):    
-    print("route /ipdetail .. ")
+    headerCols = {}
+    headerCols["Stats"] = {}        
+    headerCols["Stats"]["IPAddress"] = ""
+    headerCols["Stats"]["PacketsTransmitted"] = ""
+    headerCols["Stats"]["PacketsReceived"] = ""
+    headerCols["Stats"]["Errors"] = ""
+    headerCols["Stats"]["PacketLossPercent"] = ""
+    headerCols["Stats"]["Time"] = ""
+    headerCols["Stats"]["RoundTripMin"] = ""
+    headerCols["Stats"]["RoundTripAverage"] = ""
+    headerCols["Stats"]["RoundTripMax"] = ""
+    headerCols["Stats"]["RoundTripDeviation"] = ""
+    headerCols["Stats"]["Warning"] = ""
+    
+    print("route /ipdetail .. ")    
     cc = request.args.get('reset')
     showAll = request.args.get('showall')
     update = request.args.get('update')
@@ -49,19 +63,20 @@ def ipdetail(ip):
     for f in data:
         if bHeader == 0:            
             retString += '<table border="1" style="width:100%"><tr><th>Row</th><th>File</th>'
-            for ch in data[f]['Stats']:
+            for ch in headerCols['Stats']:
                 retString += '<th>' + ch + '</th>'
             retString += '</tr>'
             bHeader = 1
         cssClass = ''        
-        if data[f]['Stats']['PacketLossPercent'] != "0" or showAll == "1":            
-            timestamp = f.split(".")[0]
-            dt = datetime.datetime.fromtimestamp(int(timestamp))
-            retString += '<tr class="'+cssClass+'"><td>'+str(row)+'</td><td>'+str(dt)+'</td>'
-            row += 1;
-            for stat in data[f]['Stats']:
-                retString += '<td>' + data[f]['Stats'][stat] + '</td>'
-            retString += '</tr>'
+        if len(data[f]) > 0:
+            if data[f]['Stats']['PacketLossPercent'] != "0" or showAll == "1":            
+                timestamp = f.split(".")[0]
+                dt = datetime.datetime.fromtimestamp(int(timestamp))
+                retString += '<tr class="'+cssClass+'"><td>'+str(row)+'</td><td>'+str(dt)+'</td>'
+                row += 1;
+                for stat in data[f]['Stats']:
+                    retString += '<td>' + data[f]['Stats'][stat] + '</td>'
+                retString += '</tr>'
     retString += '</table>'            
     retString = retString + '</body></html>'
     return retString
