@@ -56,6 +56,7 @@ def ipdetail(ip):
     if p is None: 
         raise Exception('no path given')    
     data = read.readIpIterationFiles(p+'/'+ip,clearCache)
+    data = dict(reversed(sorted(data.items())))
     retString = '<html><head><title></title><style>.error { background-color:#ff7777; }</style></head><body>'
     retString += '<p><a href="?reset=1">reset</a></p>'
     retString += '<p><a href="?showall=1">show all</a></p>'
